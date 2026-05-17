@@ -22,7 +22,6 @@
     </main>
 
     <script>
-        // ✅ Fixed Credentials and Your Real WhatsApp Number Integrated
         const MY_WHATSAPP_NUMBER = "917200073026"; 
         const SUPABASE_URL = "https://mzwkuhtwzsuzwxuiujkk.supabase.co"; 
         const SUPABASE_KEY = "sb_publishable_4GyLDREsM422Jl0sQYyxcQ_ykwCVYFz";
@@ -32,7 +31,6 @@
             const productGrid = document.getElementById('productGrid');
             const noProductsMessage = document.getElementById('noProductsMessage');
             
-            // Fetch live data directly from your Supabase table
             const { data: products, error } = await supabase
                 .from('products')
                 .select('*');
@@ -56,7 +54,7 @@
                         <div>
                             <h3 class="font-bold text-lg text-gray-900 truncate">${product.title}</h3>
                             <p class="text-gray-500 text-sm my-1 line-clamp-2">${product.description}</p>
-                            <p class="text-xl font-extrabold text-slate-900 mt-2">₹${product.price}</p>
+                            <p class="text-xl font-extrabold text-slate-900 mt-2">rupees ${product.price}</p>
                         </div>
                         <button onclick="buyOnWhatsApp('${cleanTitle}', '${cleanPrice}')" class="w-full mt-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded flex items-center justify-center gap-2 transition cursor-pointer">
                             Buy via WhatsApp
@@ -70,8 +68,8 @@
         function buyOnWhatsApp(title, price) {
             const decodedTitle = decodeURIComponent(title);
             const decodedPrice = decodeURIComponent(price);
-            const message = `Hello! I want to buy this product from your website:\n\n🛍️ *Product:* ${decodedTitle}\n💰 *Price:* ₹${decodedPrice}`;
-            window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+            const message = "Hello! I want to buy this product from your website:\n\nProduct: " + decodedTitle + "\nPrice: rupees " + decodedPrice;
+            window.open("https://wa.me/" + MY_WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message), '_blank');
         }
 
         document.getElementById('searchBar').addEventListener('input', (e) => {
