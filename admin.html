@@ -58,7 +58,6 @@
     </div>
 
     <script>
-        // ✅ Linked with your live Supabase credentials
         const SUPABASE_URL = "https://mzwkuhtwzsuzwxuiujkk.supabase.co"; 
         const SUPABASE_KEY = "sb_publishable_4GyLDREsM422Jl0sQYyxcQ_ykwCVYFz";
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -69,13 +68,11 @@
             const userVal = document.getElementById('username').value.trim();
             const passVal = document.getElementById('password').value.trim();
 
-            // லாகின் சரிபார்ப்பு (admin / mysecret123)
             if (userVal === "admin" && passVal === "mysecret123") {
-                // லாக் ஸ்கிரீனை முழுமையாக மறைத்து, அட்மின் பேனலை காட்டுகிறது
+                alert("Success! Login matched. Opening dashboard now.");
+                
                 document.getElementById('lockScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
-                
-                // பேக்கிரவுண்ட் நிறத்தை மாற்றுகிறது
                 document.getElementById('mainBody').className = "bg-gray-100 min-h-screen p-4 flex justify-center";
             } else {
                 alert("Access Denied! Wrong Username or Password.");
@@ -90,13 +87,12 @@
             const description = document.getElementById('prodDesc').value;
             const image = document.getElementById('prodImageLink').value.trim();
 
-            // Cloud Save Logic to Supabase Database
             const { data, error } = await supabase
                 .from('products')
                 .insert([{ title, price, description, image }]);
 
             if (error) {
-                alert("Database-la save panna mudiyala thala: " + error.message);
+                alert("Database Error: " + error.message);
             } else {
                 document.getElementById('uploadForm').reset();
                 alert("🎉 Product successfully published live on Cloud Database!");
