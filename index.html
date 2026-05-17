@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My E-Commerce Store</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <nav class="bg-slate-900 text-white p-4 flex justify-between items-center sticky top-0 z-50 shadow-md">
+        <h1 class="text-2xl font-bold tracking-wider text-orange-500">MY STORE</h1>
+        <input type="text" id="searchBar" placeholder="Search products..." class="p-2 rounded text-black w-1/3 border-none focus:outline-none hidden sm:block">
+        <a href="admin.html" class="bg-orange-500 px-4 py-2 rounded text-sm font-bold hover:bg-orange-600 transition">Admin Controls</a>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Featured Products</h2>
+        <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"></div>
+        <p id="noProductsMessage" class="text-gray-500 text-center py-10 hidden">No products available yet. Admin needs to upload.</p>
+    </main>
+
+    <script>
+        // ✅ Fixed Credentials and Your Real WhatsApp Number Integrated
+        const MY_WHATSAPP_NUMBER = "917200073026"; 
+        const SUPABASE_URL = "https://mzwkuhtwzsuzwxuiujkk.supabase.co"; 
+        const SUPABASE_KEY = "sb_publishable_4GyLDREsM422Jl0sQYyxcQ_ykwCVYFz";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadProducts() {
+            const productGrid = document.getElementById('productGrid');
+            const noProductsMessage = document.getElementById('noProductsMessage');
+            
+            // Fetch live data directly from your Supabase table
+            const { data: products, error } = await supabase
+                .from('products')
+                .select('*');
+
+            if (error || !products || products.length === 0) {
+                noProductsMessage.classList.remove('hidden');
+                productGrid.innerHTML = '';
+                return;
+            }
+
+            noProductsMessage.classList.add('hidden');
+            productGrid.innerHTML = '';
+            
+            products.forEach(product => {
+                const cleanTitle = encodeURIComponent(product.title);
+                const cleanPrice = encodeURIComponent(product.price);
+
+                const productCard = `
+                    <div class="bg-white p-4 rounded-xl shadow-md flex flex-col justify-between hover:shadow-xl transition">
+                        <img src="${product.image}" alt="${product.title}" class="w-full h-48 object-contain rounded-md mb-4 bg-gray-50" onerror="this.src='https://placehold.co/300?text=Image+URL+Error'">
+                        <div>
+                            <h3 class="font-bold text-lg text-gray-900 truncate">${product.title}</h3>
+                            <p class="text-gray-500 text-sm my-1 line-clamp-2">${product.description}</p>
+                            <p class="text-xl font-extrabold text-slate-900 mt-2">₹${product.price}</p>
+                        </div>
+                        <button onclick="buyOnWhatsApp('${cleanTitle}', '${cleanPrice}')" class="w-full mt-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded flex items-center justify-center gap-2 transition cursor-pointer">
+                            Buy via WhatsApp
+                        </button>
+                    </div>
+                `;
+                productGrid.innerHTML += productCard;
+            });
+        }
+
+        function buyOnWhatsApp(title, price) {
+            const decodedTitle = decodeURIComponent(title);
+            const decodedPrice = decodeURIComponent(price);
+            const message = `Hello! I want to buy this product from your website:\n\n🛍️ *Product:* ${decodedTitle}\n💰 *Price:* ₹${decodedPrice}`;
+            window.open(`https://wa.me/${MY_WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        document.getElementById('searchBar').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = document.getElementById('productGrid').getElementsByClassName('bg-white');
+            Array.from(cards).forEach(card => {
+                const title = card.querySelector('h3').innerText.toLowerCase();
+                card.style.display = title.includes(searchTerm) ? "flex" : "none";
+            });
+        });
+
+        window.onload = loadProducts;
+    </script>
+</body>
+</html>
